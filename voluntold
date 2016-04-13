@@ -1,0 +1,54 @@
+#!/usr/bin/env ruby
+#
+## Volunteer Your Employees For Themselves!
+## No longer will your employees needlesly toil over who gets the short end of the stick
+#
+
+require 'rubygems'
+require 'thor'
+
+class Voluntold < Thor
+
+  desc "list", "List of Employees Currently Eligible for Volunteer Service"
+  def list
+    employees = IO.readlines("volunteers.txt").each { |l| l.chomp! }
+    puts "#{employees.length} Employees Currently Eligible for Volunteer Service:"
+    puts employees.sort
+  end
+
+  desc "volunteer", "Volunteer a Random Employee for Themself!"
+  def volunteer
+    employees = IO.readlines("volunteers.txt").each { |l| l.chomp! }
+    puts "#{employees[rand(employees.length)]} Graciously Volunteers Themself!"
+  end
+
+  desc "add \"NAME\"", "Add a New Employee (name in double quotes) to the List of Currently Eligible Volunteers"
+  def add(name)
+    employees = IO.readlines("volunteers.txt").each { |l| l.chomp! }
+    if employees.include?(name)
+      puts "#{name} is Already a Currently Eligible Volunteer"
+      exit
+    else
+      employees.push(name)
+      open('volunteers.txt', 'w') { |f| f.puts employees }
+      list()
+    end
+  end
+
+  desc "remove \"NAME\"", "Remove Employee (name in double quotes) from the List of Currently Eligible Volunteers"
+  def remove(name)
+    employees = IO.readlines("volunteers.txt").each { |l| l.chomp! }
+    if employees.include?(name)
+      employees -= [name]
+      open('volunteers.txt', 'w') { |f| f.puts employees }
+      list()
+    else
+      puts "#{name} Does Not Match Any Currently Eligible Volunteers"
+      exit
+    end
+  end
+
+end
+
+Voluntold.start
+
